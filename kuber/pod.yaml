@@ -1,0 +1,19 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: app-pod
+spec:
+  containers:
+    - name: app
+      image: tkachikaa/k8s-lab-1:latest
+      volumeMounts:
+        - name: log-volume 
+          mountPath: /app/logs
+      envFrom:
+        - configMapRef:
+            name: app-config-map
+  volumes:
+    - name: log-volume 
+      emptyDir: {}
+...

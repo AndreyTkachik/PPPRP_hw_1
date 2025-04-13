@@ -1,0 +1,35 @@
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: log-archiver
+  labels:
+    app: log-archiver
+spec:
+  schedule: "*/10 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: log-archiver
+              image: busybox
+              command: ["/bin/sh", "-c"]
+              args:
+                - |
+                  timestamp=$(date +%Y%m%d%H%M%S)
+                  tar -czf /tmp/app-logs-${timestamp}.tar.gz /app/logs/
+              volumeMounts:
+                - name: log-volume
+                  mountPath: /app/logs
+                - name: tmp-volume
+                  mountPath: /tmp
+          volumes:
+            - name: log-volume
+              hostPath:
+                path: /var/log/app-logs
+                type: DirectoryOrCreate
+            - name: tmp-volume
+              emptyDir: {}
+          restartPolicy: OnFailure
+...

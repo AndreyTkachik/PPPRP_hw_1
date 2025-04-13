@@ -1,0 +1,9 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config-map
+data:
+  APP_MESSAGE: "Welcome to logger from k8s"
+  APP_FILE_PATH: "/app/logs/app.log"
+...

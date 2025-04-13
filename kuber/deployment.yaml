@@ -1,0 +1,38 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: app-deployment
+  template:
+    metadata:
+      labels:
+        app: app-deployment
+    spec:
+      containers:
+      - name: app
+        image: tkachikaa/k8s-lab-1:latest
+        ports:
+          - containerPort: 8080
+        volumeMounts:
+          - name: log-volume
+            mountPath: /app/logs
+            subPathExpr: $(POD_NAME)
+        env:
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+        envFrom:
+          - configMapRef:
+              name: app-config-map
+      volumes:
+        - name: log-volume
+          hostPath:
+            path: /var/log/app-logs
+            type: DirectoryOrCreate
+...
